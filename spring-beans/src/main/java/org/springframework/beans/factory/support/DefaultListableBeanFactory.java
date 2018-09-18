@@ -96,6 +96,9 @@ import org.springframework.util.StringUtils;
  * @see PropertiesBeanDefinitionReader
  * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
  */
+/**
+ * 在Spring中，实际上是把 DefaultListableBeanFactory 作为一个默认的功能完整的IoC容器
+ */
 @SuppressWarnings("serial")
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
 		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {

@@ -52,6 +52,13 @@ import org.springframework.core.io.Resource;
  * @see #getResourceByPath
  * @see GenericApplicationContext
  */
+/**
+ * 在 FileSystemXmlApplicationContext的设计中，我们看到 ApplicationContext应用上下文的主要功能已经在
+ * 基类 AbstractXmlApplicationContext中实现了，在 FileSystemXmlApplicationContext中，作为一个具体的应用上下文，
+ * 只需实现和它自身设计相关的两个功能。
+ * 1.如果应用直接使用 FileSystemXmlApplicationContext，对应实例化这个应用上下文的支持，同时启动 IoC日期的refresh（）过程。
+ * 2.读取不同的BeanDefinition
+ */
 public class FileSystemXmlApplicationContext extends AbstractXmlApplicationContext {
 
 	/**
@@ -80,6 +87,7 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 	 * @param configLocation file path
 	 * @throws BeansException if context creation failed
 	 */
+	// 这个构造函数的 configLocation 包含的是 BeanDefinition所在的文件路径
 	public FileSystemXmlApplicationContext(String configLocation) throws BeansException {
 		this(new String[] {configLocation}, true, null);
 	}
@@ -90,6 +98,7 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 	 * @param configLocations array of file paths
 	 * @throws BeansException if context creation failed
 	 */
+	// 这个构造函数的 configLocation 包含多个 BeanDefinition的文件路径
 	public FileSystemXmlApplicationContext(String... configLocations) throws BeansException {
 		this(configLocations, true, null);
 	}
@@ -102,6 +111,7 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 	 * @param parent the parent context
 	 * @throws BeansException if context creation failed
 	 */
+	// 这个构造函数的 configLocation 包含多个 BeanDefinition的文件路径的同时，还允许指定自己的双亲IoC容器
 	public FileSystemXmlApplicationContext(String[] configLocations, ApplicationContext parent) throws BeansException {
 		this(configLocations, true, parent);
 	}
@@ -131,6 +141,8 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 	 * @throws BeansException if context creation failed
 	 * @see #refresh()
 	 */
+	// 在对象的初始化过程中，调用refresh函数载入 BeanDefinition，这个refresh启动了
+	// BeanDefinition的载入过程，
 	public FileSystemXmlApplicationContext(String[] configLocations, boolean refresh, ApplicationContext parent)
 			throws BeansException {
 
@@ -151,6 +163,9 @@ public class FileSystemXmlApplicationContext extends AbstractXmlApplicationConte
 	 * @return Resource handle
 	 * @see org.springframework.web.context.support.XmlWebApplicationContext#getResourceByPath
 	 */
+	// 这是应用于文件系统中Resource实现，通过构造一个 FileSystemResource 来得到一个在文件系统中定位的 BeanDefinition
+	// 这个 getResourceByPath 是在 BeanDefinitionReader 的 loadBeanDefinition 中被调用的
+	// loadBeanDefinition 采用了模板模式，具体的定位实现实际上是由各个子类来完成的
 	@Override
 	protected Resource getResourceByPath(String path) {
 		if (path != null && path.startsWith("/")) {

@@ -54,6 +54,14 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * @see org.springframework.beans.factory.BeanFactory
  * @see org.springframework.core.io.ResourceLoader
  */
+
+/**
+ * 1.支持不同的信息源。MessageSource可以支持国际化的实现。
+ * 2.访问资源。这一特性体现在对 ResourceLoader 和 Resource 的支持上，这样我们可以从不同地方得到Bean定义资源。
+ * 3.支持应用事件。继承了接口 ApplicationEventPublisher，从而在上下文中引入了事件机制。
+ * 		这些事件与Bean的生命周期的结合为Bean的管理提供了便利。
+ * 4.在ApplicationContext中提供的附加服务。这些服务使得基本IoC容器的功能更丰富。
+ */
 public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
 		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
 

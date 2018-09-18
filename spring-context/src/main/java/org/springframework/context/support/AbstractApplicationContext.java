@@ -445,6 +445,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return new StandardEnvironment();
 	}
 
+	/**
+	 * IoC 关键部分
+	 * @throws BeansException
+	 * @throws IllegalStateException
+	 */
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.

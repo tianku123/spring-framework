@@ -35,6 +35,10 @@ import java.util.Locale;
  * @see org.springframework.context.support.ResourceBundleMessageSource
  * @see org.springframework.context.support.ReloadableResourceBundleMessageSource
  */
+
+/**
+ * 支持不同的信息源。信息源的扩展功能可以支持国际化的实现，为开发多语言版本的应用提供服务。
+ */
 public interface MessageSource {
 
 	/**

@@ -107,6 +107,35 @@ import org.springframework.beans.BeansException;
  * @see DisposableBean#destroy
  * @see org.springframework.beans.factory.support.RootBeanDefinition#getDestroyMethodName
  */
+
+/**
+ *
+ * 1.从接口BeanFactory 到 HiberarchicalBeanFactory，再到 ConfigurableBeanFactory，是一条主要的BeanFactory设计路径。
+ * 		在这条接口路设计路径中，BeanFactory接口定义了基本的Ioc容器的规范。
+ * 		HiberarchicalBeanFactory 接口继承了BeanFactory的基本接口之后，增加了 getParentBeanFactory（）的接口功能，
+ * 		使 BeanFactory具备了双亲IoC容器的管理功能。
+ * 		ConfigurableBeanFactory 接口中，主要定义了一些对 BeanFactory 的配置功能，比如通过 setParentBeanFactory（）设置双亲IoC容器，
+ * 		通过 addBeanPostProcessor（）配置Bean后置处理器，等等。
+ * 2.第二条接口设计主线是， 以 ApplicationContext 应用上下文接口为核心的接口设计，这里涉及的主要接口设计有，
+ * 		从BeanFactory 到 ListableBeanFactory，再到 ApplicationContext，再到我们常用的 WebApplicationContext 或者
+ * 		ConfigurableApplicationContext接口。
+ * 		在这个接口体系中， ListableBeanFactory 和 HierarchicalBeanFactory 两个接口，连接 BeanFactory接口定义和 ApplicationContext
+ * 		应用上下文的接口定义。
+ * 		在 ListableBeanFactory接口中，细化了许多 BeanFactory 的接口功能，比如定义了 getBeanDefinitionNames（）接口方法；
+ * 		对于 HierarchicalBeanFactory接口，上面已经提到；
+ * 		对于ApplicationContext 接口，它通过继承 MessageSource、ResourceLoader、ApplicationEventPublisher接口，在BeanFactory简单Ioc容器
+ * 		的基础上添加了许多对高级容器的特性的支持。
+ * 3.这里涉及的是主要接口关系，而具体的 IoC容器都是在这个接口体系下实现的，比如 DefaultListableBeanFactory， 这个基本IoC容器的实现
+ * 		就是实现了 ConfigurableBeanFactory，从而成为一个简单IoC容器的实现。
+ * 		像其他Ioc容器，比如XmlBeanFactory，都是在 DefaultListableBeanFactory 的基础上做扩展，同样地，ApplicationContext的实现也是如此。
+ *
+ * 4. 这个接口系统是以 BeanFactory 和 ApplicationContext为核心的。而BeanFactory又是IoC容器的基本接口，在ApplicationContext的设计中，
+ *		一方面，可以看到它继承了 BeanFactory接口体系中的 ListableBeanFactory、AutowireCapableBeanFactory、HierarchicalBeanFactory 等
+ *		BeanFactory接口，具备了 BeanFactory IoC容器的基本功能；另一方面，通过继承 MessageSource、ResourceLoader、ApplicationEventPublisher
+ *		这些接口，BeanFactory为ApplicationContext 赋予了更高级的IoC容器特性。
+ *		为了在Web环境中使用它，还设计了 WebApplicationContext接口，而这个接口通过继承 ThemeSource 接口来扩充功能。
+ *
+ */
 public interface BeanFactory {
 
 	/**
@@ -114,6 +143,13 @@ public interface BeanFactory {
 	 * beans <i>created</i> by the FactoryBean. For example, if the bean named
 	 * {@code myJndiObject} is a FactoryBean, getting {@code &myJndiObject}
 	 * will return the factory, not the instance returned by the factory.
+	 */
+	/**
+	 *
+	 * 用户使用容器时，可以使用转义符“&”来得到FactoryBean 本身，用来区分通过容器来获取 FactoryBean 产生的对象和获取 FactoryBean本身。
+	 * 举例来说，如果myJndiObject 是一个 FactoryBean，那么使用 &myJndiObject 得到的是 FactoryBean，而不是 myJndiObject 这个 FactoryBean
+	 * 产生出来的对象。
+	 *
 	 */
 	String FACTORY_BEAN_PREFIX = "&";
 

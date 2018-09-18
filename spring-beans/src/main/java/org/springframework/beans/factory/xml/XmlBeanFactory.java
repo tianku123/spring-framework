@@ -50,6 +50,15 @@ import org.springframework.core.io.Resource;
  * @deprecated as of Spring 3.1 in favor of {@link DefaultListableBeanFactory} and
  * {@link XmlBeanDefinitionReader}
  */
+
+/**
+ * 在Spring中，实际上是把 DefaultListableBeanFactory 作为一个默认的功能完整的IoC容器.
+ * XmlBeanFactory 在继承了 DefaultListableBeanFactory 容器的功能的同时，增加了新的功能，
+ * 它是一个可以读取以XML文件方式定义的 BeanDefinition 的 IoC容器。
+ * 对这些 XML文件定义信息的处理并不是有 XmlBeanFactory直接完成的。在 XmlBeanFactory中，
+ * 初始化了一个 XmlBeanDefinitionReader 对象，有了这个 Reader 对象，那些以 XML方式定义的
+ * BeanDefinition就有了处理的地方。
+ */
 @Deprecated
 @SuppressWarnings({"serial", "all"})
 public class XmlBeanFactory extends DefaultListableBeanFactory {
@@ -62,6 +71,17 @@ public class XmlBeanFactory extends DefaultListableBeanFactory {
 	 * which must be parsable using DOM.
 	 * @param resource XML resource to load bean definitions from
 	 * @throws BeansException in case of loading or parsing errors
+	 */
+	/**
+	 *
+	 * 构造 XmlBeanFactory这个 IoC容器时，需要指定 BeanDefinition的信息来源，而这个信息来源需要封装成Spring中的Resource类来给出。
+	 * Resource 是Spring用来封装I/O操作的类。
+	 * 比如，BeanDefinition信息是以XML文件形式存在的，那么可以使用像“ClassPathResource res = new ClassPathResource（"bean.xml"）”
+	 * 这样具体的 ClassPathResource来构造需要的Resource，然后将 Resource作为构造参数传递给 XmlBeanFactory构造函数。
+	 * 这样，IoC容器就可以方便地定位到需要的BeanDefinition信息来对Bean完成容器的初始化和依赖注入过程。
+	 *
+	 * @param resource
+	 * @throws BeansException
 	 */
 	public XmlBeanFactory(Resource resource) throws BeansException {
 		this(resource, null);
@@ -76,6 +96,9 @@ public class XmlBeanFactory extends DefaultListableBeanFactory {
 	 */
 	public XmlBeanFactory(Resource resource, BeanFactory parentBeanFactory) throws BeansException {
 		super(parentBeanFactory);
+		/**
+		 * 调用启动从 Resource中载入 BeanDefinition的过程，loadBeanDefinitions同时也是Ioc容器初始化的重要组成部分。
+		 */
 		this.reader.loadBeanDefinitions(resource);
 	}
 

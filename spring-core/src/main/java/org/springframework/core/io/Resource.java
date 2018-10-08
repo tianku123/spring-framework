@@ -44,6 +44,10 @@ import java.net.URL;
  * @see ByteArrayResource
  * @see InputStreamResource
  */
+
+/**
+ * Spring 对其内部使用到的资源实现了自己的抽象结构：Resource接口来封装底层资源。
+ */
 public interface Resource extends InputStreamSource {
 
 	/**
@@ -117,6 +121,12 @@ public interface Resource extends InputStreamSource {
 	 * @return the resource handle for the relative resource
 	 * @throws IOException if the relative resource cannot be determined
 	 */
+	/**
+	 * 基于当前资源创建一个相对资源的方法
+	 * @param relativePath
+	 * @return
+	 * @throws IOException
+	 */
 	Resource createRelative(String relativePath) throws IOException;
 
 	/**
@@ -133,6 +143,10 @@ public interface Resource extends InputStreamSource {
 	 * <p>Implementations are also encouraged to return this value
 	 * from their {@code toString} method.
 	 * @see Object#toString()
+	 */
+	/**
+	 * 错误处理中的打印信息
+	 * @return
 	 */
 	String getDescription();
 

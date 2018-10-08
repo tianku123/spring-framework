@@ -38,6 +38,10 @@ import java.io.InputStream;
  * @see InputStreamResource
  * @see ByteArrayResource
  */
+
+/**
+ * 封装任何能返回 InputStream的类
+ */
 public interface InputStreamSource {
 
 	/**

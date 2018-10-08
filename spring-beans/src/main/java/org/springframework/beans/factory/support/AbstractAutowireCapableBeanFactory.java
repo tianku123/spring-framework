@@ -113,6 +113,10 @@ import org.springframework.util.StringUtils;
  * @see DefaultListableBeanFactory
  * @see BeanDefinitionRegistry
  */
+
+/**
+ * 综合 AbstractBeanFactory 并对接口 AutowireCapableBeanFactory 进行实现
+ */
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
 		implements AutowireCapableBeanFactory {
 
@@ -157,6 +161,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	public AbstractAutowireCapableBeanFactory() {
 		super();
+		/**
+		 * ignoreDependencyInterface 主要功能是忽略给定接口的自动装配功能
+		 * 举例来说，当A中有属性B，那么当Spring在获取A的Bean的时候如果属性B还没有初始化，
+		 * 那么Spring 会自动初始化B，这也是Spring中提供的一个重要特性。但是，某些情况下，
+		 * B不会被初始化，其中的一种情况就是B实现了BeanNameAware接口。
+		 * Spring中是这样介绍的：自动装配时忽略给定的依赖接口，典型应用是通过其他方式解析Application上下文注册依赖，
+		 * 类似于BeanFactory 通过BeanFactoryAware 进行注入或者 ApplicationContext 通过ApplicationContextAware进行注入。
+		 */
 		ignoreDependencyInterface(BeanNameAware.class);
 		ignoreDependencyInterface(BeanFactoryAware.class);
 		ignoreDependencyInterface(BeanClassLoaderAware.class);

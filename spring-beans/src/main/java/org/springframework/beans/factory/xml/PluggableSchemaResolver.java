@@ -54,6 +54,10 @@ import org.springframework.util.CollectionUtils;
  * @author Juergen Hoeller
  * @since 2.0
  */
+
+/**
+ * 加载 XSD类型的 PluggableSchemaResolver类的 resolveEntity 是默认到 META-INF/Spring.schemas 文件中找到systemid 所对应的 XSD文件并加载
+ */
 public class PluggableSchemaResolver implements EntityResolver {
 
 	/**

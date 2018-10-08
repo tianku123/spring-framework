@@ -40,6 +40,10 @@ import org.springframework.core.io.Resource;
  * @since 04.06.2003
  * @see ResourceEntityResolver
  */
+
+/**
+ * 加载 DTD类型的 BeansDtdResolver 的 resolveEntity 是直接截取systemId 最后的xx.dtd 然后去当前路径下寻找
+ */
 public class BeansDtdResolver implements EntityResolver {
 
 	private static final String DTD_EXTENSION = ".dtd";

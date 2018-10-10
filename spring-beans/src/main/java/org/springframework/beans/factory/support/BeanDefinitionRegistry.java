@@ -48,6 +48,7 @@ import org.springframework.core.AliasRegistry;
 
 /**
  * 定义了对BeanDefinition 的各种增删改查操作
+ * BeanDefinitionRegistry 相当于 容器中的数据库，存储 BeanDefinition
  */
 public interface BeanDefinitionRegistry extends AliasRegistry {
 

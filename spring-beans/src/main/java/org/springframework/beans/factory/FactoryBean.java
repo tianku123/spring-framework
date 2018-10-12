@@ -53,6 +53,18 @@ package org.springframework.beans.factory;
  * @see org.springframework.aop.framework.ProxyFactoryBean
  * @see org.springframework.jndi.JndiObjectFactoryBean
  */
+
+/**
+ * 一般情况下，Spring 通过反射机制利用 bean 的class属性指定实现类来实例化bean。
+ * 在某些情况下，实例化 bean 过程比较复杂，如果按照传统的方式，则需要在 <bean></bean> 中提供大量的
+ * 配置信息，配置方式的灵活性是受限的，这时采用编码的方式可能会得到一个简单的方案。
+ * Spring 为此提供了一个 org.springframework.bean.factory.FactoryBean 的工厂类接口，用户可以通过实现
+ * 该接口定制实例化 bean 的逻辑。
+ *
+ * FactoryBean 接口对于 Spring 框架来说占有重要的地位，Spring自身就提供了 70多个FactoryBean 的实现。
+ * 它们隐藏了实例化一些复杂 bean 的细节，给上层应用带来了便利。
+ * @param <T>
+ */
 public interface FactoryBean<T> {
 
 	/**
@@ -71,6 +83,13 @@ public interface FactoryBean<T> {
 	 * @return an instance of the bean (can be {@code null})
 	 * @throws Exception in case of creation errors
 	 * @see FactoryBeanNotInitializedException
+	 */
+	/**
+	 * 返回由 FactoryBean 创建的 bean 实例，如果 isSingleton() 返回 true，则该实例会放到 Spring 容器中单实例缓存池中。
+	 *
+	 * 当配置文件中 <bean></bean> 的 class 属性的实现类是 FactoryBean 时，通过 getBean() 方法返回的不是 FactoryBean本身，
+	 * 而是 FactoryBean#getObject() 方法所返回的对象，相当于 FactoryBean#getObject() 代理了 getBean() 方法。
+	 *
 	 */
 	T getObject() throws Exception;
 
@@ -92,6 +111,9 @@ public interface FactoryBean<T> {
 	 * @return the type of object that this FactoryBean creates,
 	 * or {@code null} if not known at the time of the call
 	 * @see ListableBeanFactory#getBeansOfType
+	 */
+	/**
+	 * 返回 FactoryBean 创建的 bean 类型
 	 */
 	Class<?> getObjectType();
 
@@ -117,6 +139,9 @@ public interface FactoryBean<T> {
 	 * @return whether the exposed object is a singleton
 	 * @see #getObject()
 	 * @see SmartFactoryBean#isPrototype()
+	 */
+	/**
+	 * 返回由 FactoryBean 创建的 bean 实例的作用域是 singleton 还是 prototype
 	 */
 	boolean isSingleton();
 

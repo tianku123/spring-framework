@@ -43,6 +43,10 @@ import org.springframework.beans.PropertyValues;
  * @see org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#setCustomTargetSourceCreators
  * @see org.springframework.aop.framework.autoproxy.target.LazyInitTargetSourceCreator
  */
+
+/**
+ * 实例化增强后置处理器
+ */
 public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 
 	/**
@@ -80,6 +84,9 @@ public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 	 * Returning {@code false} will also prevent any subsequent InstantiationAwareBeanPostProcessor
 	 * instances being invoked on this bean instance.
 	 * @throws org.springframework.beans.BeansException in case of errors
+	 */
+	/**
+	 * 返回值为是否记录填充 bean
 	 */
 	boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException;
 

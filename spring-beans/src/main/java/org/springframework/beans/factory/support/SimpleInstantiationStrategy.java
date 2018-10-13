@@ -54,10 +54,21 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 		return currentlyInvokedFactoryMethod.get();
 	}
 
-
+	/**
+	 * 实例化策略
+	 *
+	 * 实例化过程中反复提到过实例化策略，那这又是做什么用的呢？
+	 * 其实，经过前面的分析，我们已经得到了足以实例化的所有相关信息，完全可以使用最简单的反射方法直接反射
+	 * 来实例对象，但是Spring并没有这么做。
+	 */
 	@Override
 	public Object instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner) {
 		// Don't override the class with CGLIB if no overrides.
+		/**
+		 * 如果有需要覆盖或者动态替换的方法则当然需要使用 cglib 进行动态代理，因为可以在创建代理的同时
+		 * 动态方法织入类中，
+		 * 但是如果没有需要动态改变的方法，为了方便直接反射就可以了
+		 */
 		if (bd.getMethodOverrides().isEmpty()) {
 			Constructor<?> constructorToUse;
 			synchronized (bd.constructorArgumentLock) {
@@ -86,10 +97,12 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
+			// 通过反射实例化
 			return BeanUtils.instantiateClass(constructorToUse);
 		}
 		else {
 			// Must generate CGLIB subclass.
+			// cglib 动态代理
 			return instantiateWithMethodInjection(bd, beanName, owner);
 		}
 	}

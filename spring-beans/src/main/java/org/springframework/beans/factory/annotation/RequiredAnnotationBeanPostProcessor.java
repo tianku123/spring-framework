@@ -72,6 +72,10 @@ import org.springframework.util.Assert;
  * @see #setRequiredAnnotationType
  * @see Required
  */
+
+/**
+ * 属性校验的后置处理器
+ */
 public class RequiredAnnotationBeanPostProcessor extends InstantiationAwareBeanPostProcessorAdapter
 		implements MergedBeanDefinitionPostProcessor, PriorityOrdered, BeanFactoryAware {
 

@@ -27,6 +27,10 @@ import org.springframework.beans.BeansException;
  * @author Juergen Hoeller
  * @since 1.0.1
  */
+
+/**
+ * 销毁后置处理器
+ */
 public interface DestructionAwareBeanPostProcessor extends BeanPostProcessor {
 
 	/**

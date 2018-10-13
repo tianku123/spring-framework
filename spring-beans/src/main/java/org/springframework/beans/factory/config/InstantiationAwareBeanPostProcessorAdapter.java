@@ -59,6 +59,10 @@ public abstract class InstantiationAwareBeanPostProcessorAdapter implements Smar
 		return null;
 	}
 
+
+	/**
+	 * 返回值为是否记录填充 bean
+	 */
 	@Override
 	public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
 		return true;

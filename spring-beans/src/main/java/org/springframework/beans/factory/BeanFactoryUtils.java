@@ -57,6 +57,11 @@ public abstract class BeanFactoryUtils {
 	 * @return whether the given name is a factory dereference
 	 * @see BeanFactory#FACTORY_BEAN_PREFIX
 	 */
+	/**
+	 * 是 factoryBean 方式 name有 &前缀，返回true
+	 * @param name
+	 * @return
+	 */
 	public static boolean isFactoryDereference(String name) {
 		return (name != null && name.startsWith(BeanFactory.FACTORY_BEAN_PREFIX));
 	}

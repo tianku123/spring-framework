@@ -39,6 +39,10 @@ import org.springframework.beans.BeansException;
  * @see ConfigurableBeanFactory#addBeanPostProcessor
  * @see BeanFactoryPostProcessor
  */
+
+/**
+ * Bean 处理器
+ */
 public interface BeanPostProcessor {
 
 	/**

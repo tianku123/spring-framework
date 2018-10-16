@@ -116,6 +116,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * bean factory, shutting down the previous bean factory (if any) and
 	 * initializing a fresh bean factory for the next phase of the context's lifecycle.
 	 */
+	/**
+	 * 初始化 BeanFactory，并进行 XML文件读取，并将得到的 BeanFactory记录在当前实体的属性中
+	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
 		if (hasBeanFactory()) {
@@ -123,11 +126,19 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			closeBeanFactory();
 		}
 		try {
+			// 1.创建 DefaultListableBeanFactory
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
+			// 2.为了序列化指定 id，如果需要的话，让这个 BeanFactory 从id反序列化到BeanFactory对象
 			beanFactory.setSerializationId(getId());
+			/**
+			 * 3.定制 beanFactory，设置相关属性，包括是否允许覆盖同名的不同定义的对象以及循环依赖
+			 * 以及设置 @Autowired 和 @Qualifier 注解解析器 QualifierAnnotationAutowireCandidateResolver
+			 */
 			customizeBeanFactory(beanFactory);
+			// 4.初始化 DodumentReader，并进行 XML文件读取及解析，加载 BeanDefinition
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
+				// 5.使用全局变量记录 BeanFactory 类实例。
 				this.beanFactory = beanFactory;
 			}
 		}

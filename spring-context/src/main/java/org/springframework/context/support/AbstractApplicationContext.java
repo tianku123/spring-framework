@@ -505,44 +505,85 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return this.applicationListeners;
 	}
 
+	/**
+	 * 配置文件的解析
+	 * 1.初始化前的准备工作，例如对系统属性或者环境变量进行准备及验证。
+	 * 		在某种情况下项目的使用需要读取某些系统变量，而这个变量的设置很可能会影响着系统的正确性，
+	 * 		那么 ClassPathXmlApplicationContext 为我们提供的这个准备函数就显得非常必要，
+	 * 		它可以在 Spring启动的时候提前对必须的变量进行存在性验证。
+	 *
+	 * 2.初始化 BeanFactory，并进行 XML文件读取。
+	 * 		ClassPathXmlApplicationContext 包含着 BeanFactory 所提供的一切特征，那么在这一步骤中将会复用
+	 * 		BeanFactory 中的配置文件读取解析及其他功能，这一步之后，ClassPathXmlApplicationContext 实际上
+	 * 		就已经包含了 BeanFactory 所提供的功能，也就是可以进行 Bean 的提取等基础操作了。
+	 *
+	 * 3.对 BeanFactory 进行各种功能填充。
+	 * 		@Qualifier 与 @Autowired 应该是大家非常熟悉的注解，那么这两个注解正是在这一步骤中增加的支持。
+	 *
+	 * 4.子类覆盖方法做额外的处理。
+	 * 		Spring 之所以强大，为世人所推崇，除了它功能上为大家提供了便利外，还有一个方面是它的完美架构，
+	 * 		开放式的架构让使用它的程序员很容易根据业务需要扩展已经存在的功能。这种开放式的设计在Spring 中
+	 * 	  随处可见，例如在本例中就提供了一个空的函数实现 postProcessBeanFactory 来方便程序员在业务上作进一步扩展。
+	 *
+	 * 5.激活各种 BeanFactory 处理器。
+	 * 6.注册拦截bean 创建的 bean 处理器，这里只是注册，真正的调用是在 getBean 时候。
+	 * 7.为上下文初始化 Message 源，即对不同语言的消息体进行国际化处理。
+	 * 8.初始化应用消息广播器， 并放入 “applicationEventMulticaster” bean中。
+	 * 9.留给子类来初始化其他的bean。
+	 * 10.在所有注册的bean 中查找 listener bean，注册到消息广播器中。
+	 * 11.初始化剩下的单实例（非惰性的）
+	 * 12.完成刷新过程，通知生命周期处理器 lifecycleProcessor 刷新过程，同时发出 ContextRefreshEvent 通知别人。
+	 */
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			// 准备刷新的上下文环境
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 初始化 BeanFactory，并进行 XML 文件读取
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			// 对 BeanFactory 进行各种功能填充
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// 子类覆盖方法做额外的处理
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
+				// 激活各种 BeanFactory 处理器
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				// 注册拦截 Bean 创建的 Bean处理器，这里只是注册，真正的调用是在 getBean 时候
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				// 为上下文初始化 Message 源，即不同语言的消息体，国际化处理
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 初始化应用信息广播器，并放入“applicationEventMulticaster”bean 中
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				// 留给子类来初始化其它的 Bean
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 在所有注册的 bean 中查找 Listener bean，注册到消息广播器中
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				// 初始化剩下的单实例（非惰性的）
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 完成刷新过程，通知生命周期处理器 lifecycleProcessor 刷新过程，同时发出 ContextRefreshEvent 通知别人
 				finishRefresh();
 			}
 
@@ -574,6 +615,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Prepare this context for refreshing, setting its startup date and
 	 * active flag as well as performing any initialization of property sources.
 	 */
+	/**
+	 * 环境准备
+	 * 例如对系统属性及环境变量的初始化及验证。
+	 */
 	protected void prepareRefresh() {
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
@@ -584,10 +629,40 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Initialize any placeholder property sources in the context environment
+		// 留给子类覆盖
+		/**
+		 * 正符合Spring 的开放式结构设计，给用户最大扩展Spring的能力。用户可以根据自身的需要重写方法，
+		 * 并在方法中进行个性化的属性处理及设置
+		 */
 		initPropertySources();
 
 		// Validate that all properties marked as required are resolvable
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		// 验证需要的属性文件是否都已经放入环境中
+		/**
+		 * 对属性进行验证，那么如何验证呢？
+		 * 		假如现在有这样一个需求，工程在运行过程中用到的某个设置（例如 VAR）是从系统环境变量中取得的，
+		 * 	而如果用户没有在系统环境变量中配置这个参数，那么工程可能不会工作。这一要求可能会有各种各样的解决办法，
+		 * 	当然，在Spring中可以这样做，你可以直接修改 Spring 的源码，例如修改 ClassPathXmlApplicationContext。
+		 * 	当然，最好的办法还是对源码进行扩展，我们可以自定义类：
+		 * 		public class MyClassPathXmlApplicationContext extends ClassPathXmlApplicationContext {
+		 * 		 public MyClassPathXmlApplicationContext(String... configLocations) {
+		 * 		   super(configLocations);
+		 * 		 }
+		 * 		 protected void initPropertySources(){
+		 * 		   // 添加验证要求
+		 * 		   getEnvironment().setRequiredProperties("VAR");
+		 * 		 }
+		 * 		}
+		 * 	我们自定义了继承自 ClassPathXmlApplicationContext 的 MyClassPathXmlApplicationContext，并重写了
+		 * 	initPropertySources 方法，在方法中添加了我们的个性化需求，那么在验证的时候也就是程序走到
+		 * 	getEnvironment().validateRequiredProperties() 代码的时候，如果系统并没有检测到对应 VAR 的环境变量，
+		 * 	那么将抛出异常。当然我们还需要在使用的时候替换掉原有的 ClassPathXmlApplicationContext：
+		 * 	public static void main(String[] args) {
+		 * 	  ApplicationContext bf = new MyClassPathXmlApplicationContext("bean.xml");
+		 * 	  User user = (User) bf.getBean("test");
+		 * 	}
+		 */
 		getEnvironment().validateRequiredProperties();
 
 		// Allow for the collection of early ApplicationEvents,
@@ -610,8 +685,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #refreshBeanFactory()
 	 * @see #getBeanFactory()
 	 */
+	/**
+	 * 加载 BeanFactory
+	 *
+	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		// 初始化 BeanFactory，并进行 XML 文件读取，并将得到的 BeanFactory记录在当前实体的属性中
 		refreshBeanFactory();
+		// 返回当前实体的 beanFactory 属性
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Bean factory for " + getDisplayName() + ": " + beanFactory);

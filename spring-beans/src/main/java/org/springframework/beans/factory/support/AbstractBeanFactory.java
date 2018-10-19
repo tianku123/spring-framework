@@ -863,6 +863,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		return this.conversionService;
 	}
 
+	/**
+	 * 使用自定义属性编辑器
+	 * @param registrar
+	 */
 	@Override
 	public void addPropertyEditorRegistrar(PropertyEditorRegistrar registrar) {
 		Assert.notNull(registrar, "PropertyEditorRegistrar must not be null");
@@ -1552,6 +1556,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @param beanDefinition the bean definition that the value comes from
 	 * @return the resolved value
 	 * @see #setBeanExpressionResolver
+	 */
+	/**
+	 * 完成 SPEL 的解析
 	 */
 	protected Object evaluateBeanDefinitionString(String value, BeanDefinition beanDefinition) {
 		if (this.beanExpressionResolver == null) {
